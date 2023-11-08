@@ -46,10 +46,11 @@ class UyeOlActivity : AppCompatActivity() {
                         "id" to userId,
                         "registerDate" to Timestamp.now(),
                         "active" to true,
+                        "role" to "user",
                         "favoriteNews" to ArrayList<String>()
                     )
-                    database.collection("Users")
-                        .add(newUser)
+                    database.collection("Users").document(userId).set(newUser)
+
                         .addOnSuccessListener {
                             Toast.makeText(this,"Firebase Cloud a kaydedildi",Toast.LENGTH_SHORT).show()
                         }

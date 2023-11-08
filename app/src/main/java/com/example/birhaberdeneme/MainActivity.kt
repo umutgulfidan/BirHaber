@@ -3,6 +3,7 @@ package com.example.birhaberdeneme
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import com.example.birhaberdeneme.databinding.ActivityMainBinding
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -41,15 +42,35 @@ class MainActivity : AppCompatActivity() {
                                 val userRole = userData["role"] as String
                                 when(userRole){
                                     "user" -> {
-
+                                        startActivity(Intent(this@MainActivity,KullaniciAnaSayfaActivity::class.java))
                                     }
+
+
+                                    else ->{
+                                        Toast.makeText(this,"İlgili role elişkin activity tanımlanmamış",Toast.LENGTH_SHORT).show()
+                                    }
+
+
                                 }
                             }
+                            else{
+                                Toast.makeText(this,"Data Boş Döndü",Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                        else{
+                            Toast.makeText(this,"Kullanici Bulunamadi",Toast.LENGTH_SHORT).show()
                         }
                     }
+
+                }
+                else{
+                    Toast.makeText(this,"User Id Boş Döndü",Toast.LENGTH_SHORT).show()
                 }
 
             }
+                .addOnFailureListener{
+                    Toast.makeText(this,"Hata ${it.message}",Toast.LENGTH_SHORT).show()
+                }
         }
 
 
