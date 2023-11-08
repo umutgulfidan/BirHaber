@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "364844951582",
+    "project_id": "birhaberuygulama",
+    "storage_bucket": "birhaberuygulama.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:364844951582:android:88bc562dea2acbe1d7260f",
+        "android_client_info": {
+          "package_name": "com.example.birhaberdeneme"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzIyaMuaLcLAu4UcdsuWgsmT9RvPa66dA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

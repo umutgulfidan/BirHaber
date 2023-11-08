@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">BirHaberDeneme</string>
+    <string name="slogan">BirHaberli olan bir haber olmaz</string>
+    <string name="BirHaber">BirHaber</string>
+
+    //Giriş Ekranı Değişkenleri
+    <string name="epostaHint">E-Mail</string>
+    <string name="sifreHint">Şifre</string>
+    <string name="sifremiUnuttum">Şifremi Unuttum?</string>
+    <string name="btnGirisYap">Giriş Yap</string>
+    <string name="hesabınızYokMu">Bir Hesabın Yok mu ?</string>
+    <string name="uyeOl">Hemen Şimdi Üye Ol</string>
+
+    //Uye Ol Ekranı Değişkenleri
+    <string name="uyeOlBaslik">Üye Ol</string>
+    <string name="uyeOlbtn">Üye Ol</string>
+    <string name="sifreTekrarHint">Şifre Tekrar</string>
+    <string name="sifreEslesmedi">Şifreler Eşleşmedi Tekrar Deneyiniz</string>
+    <string name="title_activity_kullanici_ana_sayfa">KullaniciAnaSayfaActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
