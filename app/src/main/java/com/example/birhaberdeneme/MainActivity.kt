@@ -3,7 +3,11 @@ package com.example.birhaberdeneme
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import com.example.birhaberdeneme.databinding.ActivityMainBinding
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -24,6 +28,37 @@ class MainActivity : AppCompatActivity() {
         binding.twUyeOl.setOnClickListener{
             val intent = Intent(this,UyeOlActivity::class.java)
             startActivity(intent)
+        }
+
+        binding.twSifremiUnuttum.setOnClickListener{
+            // ALERT DİALOG OLUŞTURMA
+            var activity_sifremiunuttum = layoutInflater.inflate(R.layout.activity_sifremiunuttum,null)
+            val  alertDialog = AlertDialog.Builder(this)
+            alertDialog.setView(activity_sifremiunuttum)
+            alertDialog.setNegativeButton("Kapat"){dialog,which -> }
+
+            // epostayı alalım ve şifre sıfırlama yapalım
+
+            val button = activity_sifremiunuttum.findViewById<Button>(R.id.btnSifreGonder)
+            button.setOnClickListener{
+                val eposta = activity_sifremiunuttum.findViewById<EditText>(R.id.editTextTextEmailAddress).text.toString()
+                if(eposta.isNotEmpty()){
+                    auth.sendPasswordResetEmail(eposta).addOnSuccessListener {
+                        Toast.makeText(applicationContext,"E Postanızı Kontrol Ediniz",Toast.LENGTH_SHORT).show()
+                    }
+                        .addOnFailureListener{
+                            Toast.makeText(applicationContext,"Hata : ${it.message}",Toast.LENGTH_SHORT).show()
+                        }
+                }
+                else{
+                    Toast.makeText(applicationContext,"Eposta Boş olamaz",Toast.LENGTH_SHORT).show()
+                }
+
+
+            }
+
+
+            alertDialog.show()
         }
 
         binding.btnGirisYap.setOnClickListener{
