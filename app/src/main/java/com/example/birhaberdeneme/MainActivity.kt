@@ -77,7 +77,9 @@ class MainActivity : AppCompatActivity() {
                                 val userRole = userData["role"] as String
                                 when(userRole){
                                     "user" -> {
-                                        startActivity(Intent(this@MainActivity,KullaniciAnaSayfaActivity::class.java))
+                                        val intent = Intent(this@MainActivity,KullaniciAnaSayfaActivity::class.java)
+                                        startActivity(intent)
+
                                     }
 
 

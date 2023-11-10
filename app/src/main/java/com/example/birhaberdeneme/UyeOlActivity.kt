@@ -45,9 +45,11 @@ class UyeOlActivity : AppCompatActivity() {
                         "password" to password,
                         "id" to userId,
                         "registerDate" to Timestamp.now(),
+                        "profilePictureUrl" to "https://firebasestorage.googleapis.com/v0/b/birhaberuygulama.appspot.com/o/ProfilPictures%2Fdefault_picture.jpg?alt=media&token=87cb3f46-ca79-4c93-a23c-381cad108c71",
                         "active" to true,
                         "role" to "user",
-                        "favoriteNews" to ArrayList<String>()
+                        "favoriteNews" to ArrayList<String>(),
+                        "okunanHaberSayisi" to "0"
                     )
                     database.collection("Users").document(userId).set(newUser)
 

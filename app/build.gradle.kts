@@ -52,6 +52,12 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.4")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.4")
+    implementation("com.google.firebase:firebase-storage:20.3.0")
+
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
+    implementation ("com.squareup.picasso:picasso:2.71828")
+
+
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
