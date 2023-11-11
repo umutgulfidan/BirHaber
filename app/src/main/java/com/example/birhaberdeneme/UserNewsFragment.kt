@@ -1,10 +1,16 @@
 package com.example.birhaberdeneme
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.birhaberdeneme.databinding.FragmentUserNewsBinding
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -21,6 +27,13 @@ class UserNewsFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    private lateinit var binding: FragmentUserNewsBinding
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var newsAdapter: NewsAdapter
+    private val fireStore =FirebaseFirestore.getInstance()
+    private val newsCollection = fireStore.collection("News")
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -33,8 +46,39 @@ class UserNewsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        val view = inflater.inflate(R.layout.fragment_user_news, container, false)
+
+        recyclerView = view.findViewById(R.id.recyclerView)
+        newsAdapter = NewsAdapter()
+
+        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.adapter = newsAdapter
+
+        loadNewsData()
+
+        return view
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_user_news, container, false)
+    }
+
+    private fun loadNewsData() {
+        // Firebase Firestore'dan haber verilerini çekme
+        newsCollection.orderBy("newsUploadDate", Query.Direction.DESCENDING)
+            .get()
+            .addOnSuccessListener { result ->
+                val newsList = mutableListOf<NewsModule>()
+                for (document in result.documents) {
+                    val news = document.toObject(NewsModule::class.java)
+                    news?.let {
+                        newsList.add(it)
+                    }
+                }
+                newsAdapter.updateNewList(newsList)
+            }
+            .addOnFailureListener { exception ->
+                // Hata durumunda işlemler
+                 Log.e("NewsFragment", "Haber verilerini çekerken hata oluştu: $exception")
+            }
     }
 
     companion object {

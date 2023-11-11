@@ -26,6 +26,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
+import java.util.UUID
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -146,7 +147,7 @@ class UserAccountSettingsFragment : Fragment() {
     private fun uploadImageToFireBaseStroge(imageUri: Uri){
         binding.progressBar.visibility = View.VISIBLE
         val storageRef = storage.reference
-        val imageRef =  storageRef.child("ProfilPictures/$currentUserId/$(UUID.randomUUID()).jpg")
+        val imageRef =  storageRef.child("ProfilPictures/$currentUserId/${UUID.randomUUID()}.jpg")
 
         imageRef.putFile(imageUri).addOnSuccessListener {
             //Resim yükleme başarılı oldu
