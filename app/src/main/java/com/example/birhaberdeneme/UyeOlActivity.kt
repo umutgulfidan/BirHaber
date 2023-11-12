@@ -36,10 +36,10 @@ class UyeOlActivity : AppCompatActivity() {
 
                 val email = binding.etEmail.text.toString().trim()
                 val password = binding.etSifre.text.toString().trim()
-                auth.createUserWithEmailAndPassword(email,password).addOnCompleteListener {
+                auth.createUserWithEmailAndPassword(email,password).addOnSuccessListener {
                     task ->
-                    Toast.makeText(this,"Autha Kayıt Edildi",Toast.LENGTH_SHORT).show()
-                    val userId = task.result.user?.uid.toString()
+
+                    val userId = task.user?.uid.toString()
                     val newUser = hashMapOf(
                         "email" to email,
                         "password" to password,
@@ -55,18 +55,22 @@ class UyeOlActivity : AppCompatActivity() {
 
                         .addOnSuccessListener {
                             Toast.makeText(this,"Firebase Cloud a kaydedildi",Toast.LENGTH_SHORT).show()
+
+                            Toast.makeText(this,"Başarıyla Kayıt Oldunuz Giriş Sayfasına Yönlendiriliyorsunuz",Toast.LENGTH_LONG).show()
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                startActivity(Intent(this@UyeOlActivity,MainActivity::class.java))
+                                finish()
+                            },4000)
+
                         }
                         .addOnFailureListener{
-                            Toast.makeText(this,"Firebase Cloud a kaydedilemedi",Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this,"Firebase Cloud a kaydedilemedi\n ${it.message}",Toast.LENGTH_SHORT).show()
                         }
 
-                    Toast.makeText(this,"Başarıyla Kayıt Oldunuz Giriş Sayfasına Yönlendiriliyorsunuz",Toast.LENGTH_LONG).show()
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        startActivity(Intent(this@UyeOlActivity,MainActivity::class.java))
-                        finish()
-                    },4000)
-
                 }
+                    .addOnFailureListener{
+                        Toast.makeText(this,"Hata: ${it.message}",Toast.LENGTH_LONG).show()
+                    }
             }
             else{
                 Toast.makeText(this,"Şifreler Eşleşmedi",Toast.LENGTH_SHORT)

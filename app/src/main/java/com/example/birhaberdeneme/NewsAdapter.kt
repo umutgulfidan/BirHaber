@@ -7,10 +7,20 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import android.content.Context
+import android.content.Intent
 
 class NewsAdapter : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>()
 {
-    private var newsList : List<NewsModule> = emptyList()
+    public var newsList : List<NewsModule> = emptyList()
+    private lateinit var mListener :onItemClickListener
+    interface onItemClickListener{
+        fun onItemClick(position: Int)
+    }
+
+    fun setOnClickListener(listener: onItemClickListener){
+        mListener= listener
+    }
 
     fun updateNewList(newList: List<NewsModule>){
         newsList = newList
@@ -19,7 +29,7 @@ class NewsAdapter : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsAdapter.NewsViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_news, parent, false)
-        return NewsViewHolder(itemView)
+        return NewsViewHolder(itemView,mListener)
     }
 
     override fun onBindViewHolder(holder: NewsAdapter.NewsViewHolder, position: Int) {
@@ -32,10 +42,16 @@ class NewsAdapter : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>()
     }
 
 
-    class NewsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class NewsViewHolder(itemView: View,listener:onItemClickListener) : RecyclerView.ViewHolder(itemView) {
         private val titleTextView: TextView = itemView.findViewById(R.id.tvHaberBaslik)
         private val descriptionTextView: TextView = itemView.findViewById(R.id.tvHaberAciklama)
         private val newsImageView : ImageView = itemView.findViewById(R.id.ivHaberResim)
+
+        init {
+            itemView.setOnClickListener{
+                listener.onItemClick(adapterPosition)
+            }
+        }
 
         fun bind(news: NewsModule) {
             titleTextView.text = news.newsTitle

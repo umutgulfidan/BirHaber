@@ -1,11 +1,13 @@
 package com.example.birhaberdeneme
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.birhaberdeneme.databinding.FragmentUserNewsBinding
@@ -50,7 +52,17 @@ class UserNewsFragment : Fragment() {
 
         recyclerView = view.findViewById(R.id.recyclerView)
         newsAdapter = NewsAdapter()
+        newsAdapter.setOnClickListener(object : NewsAdapter.onItemClickListener{
+            override fun onItemClick(position: Int) {
+                Toast.makeText(context,"You Clicked on item no ${position}",Toast.LENGTH_SHORT).show()
+                val clickedNews = newsAdapter.newsList[position]
+                val clickedNewsId = clickedNews.newsId
+                val intent = Intent(context,NewsDetailActivity::class.java)
+                intent.putExtra("newsId",clickedNewsId)
+                startActivity(intent)
+            }
 
+        })
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = newsAdapter
 

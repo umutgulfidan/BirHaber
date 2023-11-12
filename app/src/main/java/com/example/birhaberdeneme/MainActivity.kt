@@ -62,52 +62,70 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnGirisYap.setOnClickListener{
+
+
             val email = binding.etEmail.text.toString()
             val sifre = binding.etSifre.text.toString()
-            auth.signInWithEmailAndPassword(email,sifre).addOnSuccessListener {
-                task ->
-                val userId = task.user?.uid.toString()
-                val userRef = database.collection("Users").document(userId)
-                if(userId != null){
-                    userRef.get().addOnSuccessListener {
-                        documentSnapshot ->
-                        if(documentSnapshot.exists()){
-                            val userData =documentSnapshot.data
-                            if(userData != null){
-                                val userRole = userData["role"] as String
-                                when(userRole){
-                                    "user" -> {
-                                        val intent = Intent(this@MainActivity,KullaniciAnaSayfaActivity::class.java)
-                                        startActivity(intent)
+            if(email.isEmpty()){
+                binding.etEmail.error = "BOŞ GEÇİLEMEZ"
+            }
+            else{
+                binding.etEmail.error = null
+            }
+            if(sifre.isEmpty()){
+                binding.etSifre.error = "BOŞ GEÇİLEMEZ"
+            }else{
+                binding.etSifre.error = null
+            }
+
+            if(email.isNotEmpty() && sifre.isNotEmpty()){
+                auth.signInWithEmailAndPassword(email,sifre).addOnSuccessListener {
+                        task ->
+                    val userId = task.user?.uid.toString()
+                    val userRef = database.collection("Users").document(userId)
+                    if(userId != null){
+                        userRef.get().addOnSuccessListener {
+                                documentSnapshot ->
+                            if(documentSnapshot.exists()){
+                                val userData =documentSnapshot.data
+                                if(userData != null){
+                                    val userRole = userData["role"] as String
+                                    when(userRole){
+                                        "user" -> {
+                                            val intent = Intent(this@MainActivity,KullaniciAnaSayfaActivity::class.java)
+                                            startActivity(intent)
+
+                                        }
+
+
+                                        else ->{
+                                            Toast.makeText(this,"İlgili role elişkin activity tanımlanmamış",Toast.LENGTH_SHORT).show()
+                                        }
+
 
                                     }
-
-
-                                    else ->{
-                                        Toast.makeText(this,"İlgili role elişkin activity tanımlanmamış",Toast.LENGTH_SHORT).show()
-                                    }
-
-
+                                }
+                                else{
+                                    Toast.makeText(this,"Data Boş Döndü",Toast.LENGTH_SHORT).show()
                                 }
                             }
                             else{
-                                Toast.makeText(this,"Data Boş Döndü",Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this,"Kullanici Bulunamadi",Toast.LENGTH_SHORT).show()
                             }
                         }
-                        else{
-                            Toast.makeText(this,"Kullanici Bulunamadi",Toast.LENGTH_SHORT).show()
-                        }
+
+                    }
+                    else{
+                        Toast.makeText(this,"User Id Boş Döndü",Toast.LENGTH_SHORT).show()
                     }
 
                 }
-                else{
-                    Toast.makeText(this,"User Id Boş Döndü",Toast.LENGTH_SHORT).show()
-                }
-
+                    .addOnFailureListener{
+                        Toast.makeText(this,"Hata ${it.message}",Toast.LENGTH_SHORT).show()
+                    }
             }
-                .addOnFailureListener{
-                    Toast.makeText(this,"Hata ${it.message}",Toast.LENGTH_SHORT).show()
-                }
+
+
         }
 
 
