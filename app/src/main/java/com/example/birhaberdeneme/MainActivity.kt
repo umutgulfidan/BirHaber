@@ -41,7 +41,9 @@ class MainActivity : AppCompatActivity() {
 
             val button = activity_sifremiunuttum.findViewById<Button>(R.id.btnSifreGonder)
             button.setOnClickListener{
-                val eposta = activity_sifremiunuttum.findViewById<EditText>(R.id.editTextTextEmailAddress).text.toString()
+                val tvEposta = activity_sifremiunuttum.findViewById<EditText>(R.id.editTextTextEmailAddress)
+                tvEposta.error = null
+                val eposta = tvEposta.text.toString()
                 if(eposta.isNotEmpty()){
                     auth.sendPasswordResetEmail(eposta).addOnSuccessListener {
                         Toast.makeText(applicationContext,"E Postanızı Kontrol Ediniz",Toast.LENGTH_SHORT).show()
@@ -51,6 +53,7 @@ class MainActivity : AppCompatActivity() {
                         }
                 }
                 else{
+                    tvEposta.error = "Eposta Boş Geçilemez"
                     Toast.makeText(applicationContext,"Eposta Boş olamaz",Toast.LENGTH_SHORT).show()
                 }
 

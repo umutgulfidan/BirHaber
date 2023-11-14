@@ -13,7 +13,11 @@ import android.content.Intent
 class NewsAdapter : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>()
 {
     public var newsList : List<NewsModule> = emptyList()
-    private lateinit var mListener :onItemClickListener
+    private var mListener: onItemClickListener = object : onItemClickListener {
+        override fun onItemClick(position: Int) {
+            // Buraya gerekirse onItemClick için bir kod ekleyebilirsiniz.
+        }
+    }
     interface onItemClickListener{
         fun onItemClick(position: Int)
     }

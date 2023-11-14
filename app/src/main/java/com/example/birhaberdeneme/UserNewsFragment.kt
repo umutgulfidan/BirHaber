@@ -80,7 +80,7 @@ class UserNewsFragment : Fragment() {
             .addOnSuccessListener { result ->
                 val newsList = mutableListOf<NewsModule>()
                 for (document in result.documents) {
-                    val news = document.toObject(NewsModule::class.java)
+                    var news = document.toObject(NewsModule::class.java)
                     news?.let {
                         newsList.add(it)
                     }

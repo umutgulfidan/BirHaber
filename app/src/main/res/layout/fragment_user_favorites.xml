@@ -1,17 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".UserFavoritesFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-black"
+        android:gravity="center"
+        android:text="@string/BirHaber"
+        android:textColor="@color/my_primary"
+        android:textSize="24sp" />
 
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/textView8"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Favoriler"
-        android:textSize="26dp"
-        android:layout_gravity="center"/>
+        android:gravity="center"
+        android:text="Favorileriniz"
+        android:textColor="@color/my_primary"
+        android:textSize="16sp"
+        android:textStyle="bold|italic" />
 
-</FrameLayout>
+    <View
+        android:id="@+id/view3"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/my_primary" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="5dp" />
+</LinearLayout>

@@ -49,7 +49,7 @@ class UyeOlActivity : AppCompatActivity() {
                         "active" to true,
                         "role" to "user",
                         "favoriteNews" to ArrayList<String>(),
-                        "okunanHaberSayisi" to "0"
+                        "okunanHaberSayisi" to 0
                     )
                     database.collection("Users").document(userId).set(newUser)
 
