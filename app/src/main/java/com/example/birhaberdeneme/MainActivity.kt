@@ -99,6 +99,9 @@ class MainActivity : AppCompatActivity() {
                                             startActivity(intent)
 
                                         }
+                                        "admin" ->{
+                                            
+                                        }
 
 
                                         else ->{

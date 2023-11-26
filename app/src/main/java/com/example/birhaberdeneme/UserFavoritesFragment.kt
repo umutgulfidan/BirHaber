@@ -1,6 +1,8 @@
 package com.example.birhaberdeneme
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +14,7 @@ import com.example.birhaberdeneme.databinding.FragmentUserFavoritesBinding
 import com.example.birhaberdeneme.databinding.FragmentUserNewsBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -53,6 +56,16 @@ class UserFavoritesFragment : Fragment() {
         // RecyclerView ve adapter'ı tanımla
         recyclerView = view.findViewById(R.id.recyclerView)
         newsAdapter = NewsAdapter()
+        newsAdapter.setOnClickListener(object :NewsAdapter.onItemClickListener{
+            override fun onItemClick(position: Int) {
+                Toast.makeText(context,"You Clicked on item no ${position}",Toast.LENGTH_SHORT).show()
+                val clickedNews = newsAdapter.newsList[position]
+                val clickedNewsId = clickedNews.newsId
+                val intent = Intent(context,NewsDetailActivity::class.java)
+                intent.putExtra("newsId",clickedNewsId)
+                startActivity(intent)
+            }
+        })
 
         // RecyclerView'a adapter'ı set et
         recyclerView.adapter = newsAdapter
@@ -119,6 +132,7 @@ class UserFavoritesFragment : Fragment() {
         else{
             Toast.makeText(context,"FAVORİ HABER EKLEMEDİNİZ",Toast.LENGTH_SHORT).show()
         }
+
 
 
 }
