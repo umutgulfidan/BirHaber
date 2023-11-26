@@ -13,16 +13,16 @@ class KullaniciAnaSayfaActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val binding = ActivityKullaniciAnaSayfaBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        replaceFregmant(UserNewsFragment())
+        replaceFragment(UserNewsFragment())
 
         binding.bottomNavigationView.setOnItemSelectedListener {
             when(it.itemId){
-                R.id.news -> replaceFregmant(UserNewsFragment())
-                R.id.favorites -> replaceFregmant(UserFavoritesFragment())
-                R.id.accountSettings -> replaceFregmant(UserAccountSettingsFragment())
+                R.id.news -> replaceFragment(UserNewsFragment())
+                R.id.favorites -> replaceFragment(UserFavoritesFragment())
+                R.id.accountSettings -> replaceFragment(UserAccountSettingsFragment())
 
                 else -> {
-                    Toast.makeText(this,"İlgili Fragment Id si bulunamadı",Toast.LENGTH_SHORT)
+                    Toast.makeText(this,"İlgili Fragment Id si bulunamadı",Toast.LENGTH_SHORT).show()
                 }
 
             }
@@ -32,7 +32,7 @@ class KullaniciAnaSayfaActivity : AppCompatActivity() {
 
     }
 
-    private fun replaceFregmant(fragment:Fragment){
+    private fun replaceFragment(fragment:Fragment){
         val fragmentManager = supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.frame_layout,fragment)

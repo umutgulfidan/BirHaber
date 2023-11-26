@@ -100,7 +100,8 @@ class MainActivity : AppCompatActivity() {
 
                                         }
                                         "admin" ->{
-                                            
+                                            val intent = Intent(this@MainActivity,AdminAnaSayfaActivity::class.java)
+                                            startActivity(intent)
                                         }
 
 

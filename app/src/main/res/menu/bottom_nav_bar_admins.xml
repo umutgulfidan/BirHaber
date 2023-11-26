@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/anasayfa"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="Anasayfa" />
+    <item
+        android:id="@+id/haberleriYonet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:icon="@drawable/haberler_vector_24"
+        android:title="Haberleri Yönet" />
+    <item
+        android:id="@+id/kullanicilariYonet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:icon="@drawable/profilayarlar_vector_24"
+        android:title="Kullanıcıları Yönet" />
+</menu>
