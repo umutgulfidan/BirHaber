@@ -5,6 +5,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.birhaberdeneme.databinding.FragmentAdminKullanicilariYonetBinding
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -20,6 +25,11 @@ class AdminKullanicilariYonetFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    private lateinit var binding : FragmentAdminKullanicilariYonetBinding
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var userAdapter: UserAdapter
+    private val firestore= FirebaseFirestore.getInstance()
+    private val usersCollection = firestore.collection("Users")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +44,30 @@ class AdminKullanicilariYonetFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_admin_kullanicilari_yonet, container, false)
+        val view = inflater.inflate(R.layout.fragment_admin_kullanicilari_yonet, container, false)
+        recyclerView = view.findViewById(R.id.recyclerViewUser)
+        userAdapter = UserAdapter()
+        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.adapter =userAdapter
+
+        loadUsersData()
+
+        return view
+    }
+
+    private fun loadUsersData(){
+        usersCollection.get().addOnSuccessListener {
+            result ->
+            val userList = mutableListOf<UserModule>()
+            for (document in result.documents){
+                var users = document.toObject(UserModule::class.java)
+                users?.let {
+                        userList.add(it)
+                }
+            }
+            userAdapter.updateUserList(userList)
+        }
+
     }
 
     companion object {

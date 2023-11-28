@@ -147,7 +147,7 @@ class UserAccountSettingsFragment : Fragment() {
     private fun uploadImageToFireBaseStroge(imageUri: Uri){
         binding.progressBar.visibility = View.VISIBLE
         val storageRef = storage.reference
-        val imageRef =  storageRef.child("ProfilPictures/$currentUserId/${UUID.randomUUID()}.jpg")
+        val imageRef =  storageRef.child("ProfilPictures/$currentUserId/profile.jpg")
 
         imageRef.putFile(imageUri).addOnSuccessListener {
             //Resim yükleme başarılı oldu
@@ -178,22 +178,33 @@ class UserAccountSettingsFragment : Fragment() {
     }
 
     private fun loadProfileImage(){
-        db.collection("Users").document(currentUserId)
-            .get()
-            .addOnSuccessListener { document ->
-                if (document.exists()) {
-                    val profilePictureUrl = document.getString("profilePictureUrl")
-                    // Profil resmini Glide kütüphanesi ile yükle ve göster
-                    Glide.with(this@UserAccountSettingsFragment)
-                        .load(profilePictureUrl)
-                        .apply(RequestOptions.bitmapTransform(CircleCrop()))
-                        .into(binding.ivProfil)
+        db.collection("Users").document(currentUserId).get().addOnSuccessListener {
+            if(it.exists()){
+                val user = it.toObject(UserModule::class.java)
+                if(user != null){
+                    if(!user.profilePictureUrl.isNullOrEmpty())
+                    {
+                        val storageRef = storage.reference.child("ProfilPictures").child(user.id).child("profile.jpg")
+                        storageRef.downloadUrl.addOnSuccessListener { uri ->
+                            val imageUrl = uri.toString()
+                            Glide.with(this)
+                                .load(imageUrl)
+                                .placeholder(R.drawable.baseline_account_circle_white_24) // Burada default_image, drawable klasöründe bulunan varsayılan görselinizdir
+                                .error(R.drawable.baseline_account_circle_white_24)// Eğer bir hata olursa gösterilecek görsel
+                                .apply(RequestOptions.bitmapTransform(CircleCrop()))
+                                .into(binding.ivProfil)
+                        }.addOnFailureListener {
+                            // Eğer resim yüklenirken bir hata olursa ne yapılacağı burada tanımlanabilir
+                            // Örneğin: Toast mesajı gösterilebilir
+                            Toast.makeText(context, "Resim yüklenirken hata oluştu : ${it.message}", Toast.LENGTH_SHORT).show()
+                        }
+                    }else {
+                        // Eğer profil resmi yoksa, imageView'inizde varsayılan görseli gösterebilirsiniz
+                        Glide.with(this).load(R.drawable.baseline_account_circle_white_24).into(binding.ivProfil)
+                    }
                 }
             }
-            .addOnFailureListener { e ->
-                // Hata durumunda
-                e.printStackTrace()
-            }
+        }
     }
 
     companion object {

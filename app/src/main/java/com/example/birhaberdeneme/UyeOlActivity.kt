@@ -11,6 +11,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.firestore
+import com.google.firebase.storage.FirebaseStorage
 
 class UyeOlActivity : AppCompatActivity() {
     lateinit var binding: ActivityUyeOlBinding
@@ -46,9 +47,9 @@ class UyeOlActivity : AppCompatActivity() {
                             "password" to password,
                             "id" to userId,
                             "registerDate" to Timestamp.now(),
-                            "profilePictureUrl" to "https://firebasestorage.googleapis.com/v0/b/birhaberuygulama.appspot.com/o/ProfilPictures%2Fdefault_picture.jpg?alt=media&token=87cb3f46-ca79-4c93-a23c-381cad108c71",
+                            "profilePictureUrl" to "",
                             "active" to true,
-                            "role" to "user",
+                            "role" to "User",
                             "favoriteNews" to ArrayList<String>(),
                             "okunanHaberSayisi" to 0
                         )

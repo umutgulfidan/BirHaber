@@ -3,12 +3,17 @@ package com.example.birhaberdeneme
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.replace
 import com.example.birhaberdeneme.databinding.ActivityKullaniciAnaSayfaBinding
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.navigation.NavigationBarView
 
 class KullaniciAnaSayfaActivity : AppCompatActivity() {
     lateinit var binding: ActivityKullaniciAnaSayfaBinding
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = ActivityKullaniciAnaSayfaBinding.inflate(layoutInflater)

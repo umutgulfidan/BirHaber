@@ -93,15 +93,20 @@ class MainActivity : AppCompatActivity() {
                                 val userData =documentSnapshot.data
                                 if(userData != null){
                                     val userRole = userData["role"] as String
-                                    when(userRole){
-                                        "user" -> {
+                                    val userActive = userData["active"] as Boolean
+                                    when{
+                                        userRole=="User" && userActive -> {
                                             val intent = Intent(this@MainActivity,KullaniciAnaSayfaActivity::class.java)
                                             startActivity(intent)
 
                                         }
-                                        "admin" ->{
+                                        userRole=="Admin" && userActive ->{
                                             val intent = Intent(this@MainActivity,AdminAnaSayfaActivity::class.java)
                                             startActivity(intent)
+                                        }
+                                        (userRole == "User" || userRole == "Admin") && !userActive ->{
+                                            Toast.makeText(this,"YASAKLANMIŞSINIZ",Toast.LENGTH_SHORT).show()
+                                            auth.signOut()
                                         }
 
 

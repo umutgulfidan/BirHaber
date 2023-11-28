@@ -8,7 +8,7 @@ data class UserModule(
     val email : String?,
     val password : String?,
     val registerDate :Timestamp?,
-    val profilPictureUrl : String?,
+    val profilePictureUrl : String?,
     val role : String?,
     val favoriteNews : List<String>?,
     val okunanHaberSayisi : Long?
