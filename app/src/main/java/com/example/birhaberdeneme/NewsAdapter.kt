@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import android.content.Context
 import android.content.Intent
+import android.widget.Toast
+import com.google.firebase.storage.FirebaseStorage
 
 class NewsAdapter : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>()
 {
@@ -60,8 +62,36 @@ class NewsAdapter : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>()
         fun bind(news: NewsModule) {
             titleTextView.text = news.newsTitle
             descriptionTextView.text = news.newsShortDescription
-            Glide.with(itemView.context).load(news.newsImageUrl)
-                .into(newsImageView)
+
+            if(!news.newsImageUrl.isNullOrEmpty()){
+                val storageRef = FirebaseStorage.getInstance().reference.child("NewsPictures").child(news.newsId).child("image.jpg")
+                storageRef.downloadUrl.addOnSuccessListener { uri ->
+                    val imageUrl = uri.toString()
+                    Glide.with(itemView.context)
+                        .load(imageUrl) // Burada default_image, drawable klasöründe bulunan varsayılan görselinizdir
+                        .error(R.drawable.hata_vector_kirmizi_32)// Eğer bir hata olursa gösterilecek görsel
+                        .into(newsImageView)
+                }.addOnFailureListener {
+                    // Eğer resim yüklenirken bir hata olursa ne yapılacağı burada tanımlanabilir
+                    // Örneğin: Toast mesajı gösterilebilir
+                    Toast.makeText(itemView.context, "Resim yüklenirken hata oluştu : ${it.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+            else{
+                val storageRef = FirebaseStorage.getInstance().reference.child("NewsPictures").child("default_picture.jpg")
+                storageRef.downloadUrl.addOnSuccessListener { uri->
+                    val defaultUrl = uri.toString()
+                    Glide.with(itemView.context).load(defaultUrl)
+                        .placeholder(R.drawable.haberler_vector_24)
+                        .error(R.drawable.hata_vector_kirmizi_32)
+                        .into(newsImageView)
+                }
+                    .addOnFailureListener{
+                        Toast.makeText(itemView.context, "Resim yüklenirken hata oluştu : ${it.message}", Toast.LENGTH_SHORT).show()
+                    }
+
+            }
+
         }
     }
 }

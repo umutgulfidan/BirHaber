@@ -8,8 +8,8 @@
 
     <ImageView
         android:id="@+id/ivUserProfileImage"
-        android:layout_width="96dp"
-        android:layout_height="100dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:layout_marginStart="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -19,20 +19,22 @@
 
     <Button
         android:id="@+id/btnYasakla"
-        android:layout_width="116dp"
-        android:layout_height="54dp"
+        android:layout_width="110dp"
+        android:layout_height="50dp"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="24dp"
         android:text="Yasakla"
+        android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/btnYetkilendir"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="110dp"
+        android:layout_height="50dp"
         android:layout_marginTop="8dp"
         android:text="Yetkilendir"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/btnYasakla"
         app:layout_constraintHorizontal_bias="1.0"
@@ -42,33 +44,46 @@
 
     <TextView
         android:id="@+id/tvActive"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="124dp"
         android:layout_marginBottom="4dp"
+        android:paddingLeft="5dp"
         android:text="active"
         app:layout_constraintBottom_toBottomOf="@+id/ivUserProfileImage"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toStartOf="@+id/btnYetkilendir"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/tvRole" />
 
     <TextView
         android:id="@+id/tvRole"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="8dp"
+        android:paddingLeft="5dp"
         android:text="role"
         app:layout_constraintBottom_toTopOf="@+id/tvActive"
-        app:layout_constraintEnd_toEndOf="@+id/tvActive"
-        app:layout_constraintStart_toStartOf="@+id/tvActive" />
+        app:layout_constraintEnd_toEndOf="@+id/tvEposta"
+        app:layout_constraintHorizontal_bias="0.468"
+        app:layout_constraintStart_toEndOf="@+id/ivUserProfileImage"
+        app:layout_constraintTop_toBottomOf="@+id/tvEposta" />
 
     <TextView
         android:id="@+id/tvEposta"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:minLines="1"
+        android:paddingLeft="5dp"
+        android:singleLine="false"
         android:text="eposta"
         app:layout_constraintBottom_toTopOf="@+id/tvRole"
-        app:layout_constraintEnd_toEndOf="@+id/tvRole"
-        app:layout_constraintStart_toStartOf="@+id/tvRole"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toStartOf="@+id/btnYasakla"
+        app:layout_constraintHorizontal_bias="0.125"
+        app:layout_constraintStart_toEndOf="@+id/ivUserProfileImage"
+        app:layout_constraintTop_toTopOf="@+id/ivUserProfileImage"
+        app:layout_constraintVertical_bias="0.0" />
 
     <View
         android:id="@+id/view8"

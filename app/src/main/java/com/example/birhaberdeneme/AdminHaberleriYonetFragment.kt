@@ -5,6 +5,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.firestore.FirebaseFirestore
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -20,6 +23,10 @@ class AdminHaberleriYonetFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var newAdapter: NewsManagementAdapter
+    private val firestore = FirebaseFirestore.getInstance()
+    private val newsCollection = firestore.collection("News")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +41,29 @@ class AdminHaberleriYonetFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_admin_haberleri_yonet, container, false)
+        val view = inflater.inflate(R.layout.fragment_admin_haberleri_yonet, container, false)
+        recyclerView = view.findViewById(R.id.recyclerViewNewsManagement)
+        newAdapter = NewsManagementAdapter()
+        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.adapter = newAdapter
+        loadNewsData()
+        return  view
+
+    }
+
+    private fun loadNewsData(){
+        newsCollection.get().addOnSuccessListener {
+            result ->
+            val newList = mutableListOf<NewsModule>()
+            for(document in result.documents){
+                val news = document.toObject(NewsModule::class.java)
+                news?.let {
+                    newList.add(it)
+                }
+                newAdapter.updateNewsList(newList)
+            }
+        }
+
     }
 
     companion object {

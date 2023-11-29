@@ -63,6 +63,12 @@ class UserAdapter : RecyclerView.Adapter<UserAdapter.UserViewHolder>() {
             else{
                 banButton.text = "Yasakla"
             }
+            if(user.role == "Admin"){
+                adminButton.text = "Yetkisini Al"
+            }
+            else{
+                adminButton.text = "Yetkilendir"
+            }
 
             // Butonlara tıklama işlevlerini ekle
             banButton.setOnClickListener {
@@ -105,7 +111,7 @@ class UserAdapter : RecyclerView.Adapter<UserAdapter.UserViewHolder>() {
                     // Tersine çevrilen rolü güncelle
                     val newRole = if (currentRole == "User") "Admin" else "User"
                     userRef.update("role", newRole).addOnSuccessListener {
-                        val buttonText = if (newRole == "User") "Admin Yap" else "User Yap"
+                        val buttonText = if (newRole == "User") "Yetkilendir" else "Yetkisini Al"
                         Toast.makeText(itemView.context, "Kullanıcı Başarıyla $newRole Yapıldı", Toast.LENGTH_SHORT).show()
                         roleTextView.text = newRole
                         adminButton.text = buttonText
