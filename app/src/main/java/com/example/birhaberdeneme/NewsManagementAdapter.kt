@@ -1,5 +1,6 @@
 package com.example.birhaberdeneme
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,6 +22,12 @@ class NewsManagementAdapter :
     public fun updateNewsList(newsList:List<NewsModule>){
         this.newsList = newsList
         notifyDataSetChanged()
+    }
+    public fun filter(text:String){
+        val filteredList = newsList.filter { news ->
+            news.newsTitle?.contains(text, ignoreCase = true) == true
+        }
+        updateNewsList(filteredList)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsManagementViewHolder {
@@ -60,22 +67,54 @@ class NewsManagementAdapter :
             }
 
             btnHaberSil.setOnClickListener{
+
                 FirebaseFirestore.getInstance().collection("News").document(new.newsId)
                     .delete().addOnSuccessListener {
                         // Silme işlemi başarılı olduğunda listeden öğeyi kaldır
                         val position = adapterPosition
+                        val deletedNewsId = adapter.newsList[position].newsId
                         adapter.newsList = adapter.newsList .filterIndexed { index, _ -> index != position }
                         adapter.notifyItemRemoved(position)
                         adapter.notifyItemRangeChanged(position, adapter.newsList.size)
                         Toast.makeText(itemView.context,"Haber Başarıyla Silindi",Toast.LENGTH_SHORT).show()
+                        // Silinen haberin ID'sini favori haberler listesinden kaldırmak için işlemi gerçekleştir
+                        val userCollection = FirebaseFirestore.getInstance().collection("Users")
+                        userCollection.get().addOnSuccessListener {querySnapshot ->
+                            for (document in querySnapshot){
+                                val userId = document.id
+                                val userRef = userCollection.document(userId)
+
+                                userRef.get().addOnSuccessListener {
+                                    val favoriteNewsList = it.get("favoriteNews") as? ArrayList<String>
+
+                                    if(favoriteNewsList != null && favoriteNewsList.contains(deletedNewsId)){
+                                        favoriteNewsList.remove(deletedNewsId)
+                                        userRef.update("favoriteNews",favoriteNewsList).addOnSuccessListener {
+                                            println("Kullanıcı $userId favori haberler listesinden silindi: $deletedNewsId")
+                                        }
+                                            .addOnFailureListener { e ->
+                                                println("Hata: Kullanıcı $userId favori haberler listesini güncellerken hata oluştu: ${e.message}")
+                                            }
+                                    }
+                                }
+                            }
+                        }
+
+
                     }
                     .addOnFailureListener{
                         Toast.makeText(itemView.context,"Hata : ${it.message}",Toast.LENGTH_SHORT).show()
                     }
+                    // Haberin Resmini storage dan silme
+                    FirebaseStorage.getInstance().reference.child("NewsPictures/${new.newsId}/news_image.jpg").delete().addOnSuccessListener {
+                        Toast.makeText(itemView.context,"Eski Haber ilişkin resim veri tabanından silindi",Toast.LENGTH_SHORT).show()
+                    }.addOnFailureListener{
+                        Toast.makeText(itemView.context,"Hata ${it.message}",Toast.LENGTH_SHORT)
+                    }
             }
 
             if(!new.newsImageUrl.isNullOrEmpty()){
-                val storageRef = FirebaseStorage.getInstance().reference.child("NewsPictures").child(new.newsId).child("image.jpg")
+                val storageRef = FirebaseStorage.getInstance().reference.child("NewsPictures").child(new.newsId).child("news_image.jpg")
                 storageRef.downloadUrl.addOnSuccessListener { uri ->
                     val imageUrl = uri.toString()
                     Glide.with(itemView.context)

@@ -7,7 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.birhaberdeneme.databinding.FragmentAdminHaberleriYonetBinding
 import com.google.firebase.firestore.FirebaseFirestore
+import java.util.Locale
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -27,6 +29,7 @@ class AdminHaberleriYonetFragment : Fragment() {
     private lateinit var newAdapter: NewsManagementAdapter
     private val firestore = FirebaseFirestore.getInstance()
     private val newsCollection = firestore.collection("News")
+    private lateinit var binding:FragmentAdminHaberleriYonetBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,12 +44,34 @@ class AdminHaberleriYonetFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_admin_haberleri_yonet, container, false)
+        binding =  FragmentAdminHaberleriYonetBinding.inflate(inflater, container, false)
+        val view = binding.root
+
         recyclerView = view.findViewById(R.id.recyclerViewNewsManagement)
         newAdapter = NewsManagementAdapter()
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = newAdapter
         loadNewsData()
+
+        binding.buttonSearchNewsManagement.setOnClickListener{
+            val text = binding.editTextSearchNewsManagement.text.toString().lowercase(Locale.getDefault())
+            if(text.isNotEmpty()){
+                newAdapter.filter(text)
+                binding.btnAramaTemizleNewsManagement.visibility = View.VISIBLE
+                binding.buttonSearchNewsManagement.visibility = View.GONE
+            }
+            else{
+                loadNewsData()
+            }
+        }
+        binding.btnAramaTemizleNewsManagement.setOnClickListener{
+            loadNewsData()
+            binding.btnAramaTemizleNewsManagement.visibility=View.GONE
+            binding.buttonSearchNewsManagement.visibility=View.VISIBLE
+            binding.editTextSearchNewsManagement.text.clear()
+        }
+
+
         return  view
 
     }

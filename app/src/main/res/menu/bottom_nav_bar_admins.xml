@@ -8,6 +8,13 @@
         android:icon="@drawable/ic_home_black_24dp"
         android:title="Anasayfa" />
     <item
+        android:id="@+id/haberEkle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:title="Haber Ekle"
+        android:icon="@drawable/haberekle_vector_kirmizi_24"
+        />
+    <item
         android:id="@+id/haberleriYonet"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

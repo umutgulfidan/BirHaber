@@ -10,9 +10,11 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.birhaberdeneme.databinding.ActivityUyeOlBinding
 import com.example.birhaberdeneme.databinding.FragmentUserNewsBinding
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import java.util.Locale
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -48,7 +50,8 @@ class UserNewsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_user_news, container, false)
+        binding = FragmentUserNewsBinding.inflate(inflater, container, false)
+        val view = binding.root
 
         recyclerView = view.findViewById(R.id.recyclerView)
         newsAdapter = NewsAdapter()
@@ -68,9 +71,27 @@ class UserNewsFragment : Fragment() {
 
         loadNewsData()
 
+        binding.buttonSearch.setOnClickListener{
+            val text = binding.editTextSearch.text.toString().lowercase(Locale.getDefault())
+            if(text.isNotEmpty()){
+                newsAdapter.filter(text)
+                binding.btnAramaTemizle.visibility = View.VISIBLE
+                binding.buttonSearch.visibility = View.GONE
+            }
+            else{
+                loadNewsData()
+            }
+
+        }
+
+        binding.btnAramaTemizle.setOnClickListener{
+            loadNewsData()
+            binding.btnAramaTemizle.visibility=View.GONE
+            binding.buttonSearch.visibility=View.VISIBLE
+            binding.editTextSearch.text.clear()
+        }
+
         return view
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_user_news, container, false)
     }
 
     private fun loadNewsData() {

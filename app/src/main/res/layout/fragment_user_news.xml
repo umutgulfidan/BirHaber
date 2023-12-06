@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".UserNewsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+    <!-- Diğer bileşenler -->
 
     <TextView
         android:id="@+id/textView3"
@@ -23,6 +24,44 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/my_primary" />
+
+    <!-- EditText ve Arama Butonu -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp">
+
+        <EditText
+            android:id="@+id/editTextSearch"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:hint="Arama"
+            android:maxLines="1"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:inputType="text"
+            android:singleLine="true"
+            />
+
+        <ImageView
+            android:id="@+id/btnAramaTemizle"
+            android:layout_width="32dp"
+            android:layout_height="48dp"
+            android:src="@drawable/temizle_vector_kirmizi_48"
+            android:visibility="gone" />
+
+        <ImageButton
+            android:id="@+id/buttonSearch"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:contentDescription="Arama yap"
+            android:src="@drawable/search_vector_kirmizi_32" />
+
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"

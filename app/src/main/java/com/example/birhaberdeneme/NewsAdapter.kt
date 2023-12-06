@@ -10,6 +10,8 @@ import com.bumptech.glide.Glide
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 
 class NewsAdapter : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>()
@@ -32,6 +34,12 @@ class NewsAdapter : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>()
         newsList = newList
         notifyDataSetChanged()
     }
+    fun filter(text: String) {
+        val filteredList = newsList.filter { news ->
+            news.newsTitle?.contains(text, ignoreCase = true) == true
+        }
+        updateNewList(filteredList)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsAdapter.NewsViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_news, parent, false)
@@ -42,6 +50,8 @@ class NewsAdapter : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>()
         val news = newsList[position]
         holder.bind(news)
     }
+
+
 
     override fun getItemCount(): Int {
         return newsList.size
@@ -64,7 +74,7 @@ class NewsAdapter : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>()
             descriptionTextView.text = news.newsShortDescription
 
             if(!news.newsImageUrl.isNullOrEmpty()){
-                val storageRef = FirebaseStorage.getInstance().reference.child("NewsPictures").child(news.newsId).child("image.jpg")
+                val storageRef = FirebaseStorage.getInstance().reference.child("NewsPictures").child(news.newsId).child("news_image.jpg")
                 storageRef.downloadUrl.addOnSuccessListener { uri ->
                     val imageUrl = uri.toString()
                     Glide.with(itemView.context)

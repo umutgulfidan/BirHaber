@@ -3,6 +3,8 @@ package com.example.birhaberdeneme
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.ImageView
 import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.example.birhaberdeneme.databinding.ActivityNewsDetailBinding
@@ -28,6 +30,12 @@ class NewsDetailActivity : AppCompatActivity() {
         // recyclerview de tıklanan haberin id si
         val newsId = intent.getStringExtra("newsId")
         val currentUserId = auth.uid.toString()
+        val ivFavoriEkle : ImageView = this.findViewById<ImageView>(R.id.btnFavori)
+        val adminMi = checkIfAdmin { isAdmin ->
+            if(isAdmin)
+                binding.btnFavori.visibility = View.GONE
+        }
+
         // fire store dan bu habere ilişkin verileri çekelim
         if(newsId != null){
             val newsDocumentRef = fireStore.collection("News").document(newsId.toString())
@@ -43,7 +51,40 @@ class NewsDetailActivity : AppCompatActivity() {
                             binding.tvHaberMetin.text = news.newsText
                             binding.textViewHaberBaslik.text = news.newsTitle
                             binding.tvHaberYazar.text = news.uploadedById
-                            Glide.with(this).load(news.newsImageUrl).into(binding.haberResim)
+
+                            if(!news.newsImageUrl.isNullOrEmpty()){
+
+                                val storageRef = FirebaseStorage.getInstance().reference.child("NewsPictures")
+                                    .child(news.newsId).child("news_image.jpg")
+
+                                storageRef.downloadUrl.addOnSuccessListener { uri ->
+                                    val imageUrl = uri.toString()
+                                    Glide.with(this)
+                                        .load(imageUrl)
+                                        .placeholder(R.drawable.haberler_vector_24) // Burada default_image, drawable klasöründe bulunan varsayılan görselinizdir
+                                        .error(R.drawable.hata_vector_kirmizi_32)// Eğer bir hata olursa gösterilecek görsel
+                                        .into(binding.haberResim)
+                                }.addOnFailureListener {
+                                    // Eğer resim yüklenirken bir hata olursa ne yapılacağı burada tanımlanabilir
+                                    // Örneğin: Toast mesajı gösterilebilir
+                                    Toast.makeText(this, "Resim yüklenirken hata oluştu : ${it.message}", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                            else{
+                                val storageRef = FirebaseStorage.getInstance().reference.child("NewsPictures").child("default_picture.jpg")
+                                storageRef.downloadUrl.addOnSuccessListener { uri->
+                                    val defaultUrl = uri.toString()
+                                    Glide.with(this).load(defaultUrl)
+                                        .placeholder(R.drawable.haberler_vector_24)
+                                        .error(R.drawable.hata_vector_kirmizi_32)
+                                        .into(binding.haberResim)
+                                }
+                                    .addOnFailureListener{
+                                        Toast.makeText(this, "Resim yüklenirken hata oluştu : ${it.message}", Toast.LENGTH_SHORT).show()
+                                    }
+
+                            }
+
 
                             fireStore.collection("Users").document(currentUserId).get().addOnSuccessListener {
                                 documentSnapshot ->
@@ -110,12 +151,26 @@ class NewsDetailActivity : AppCompatActivity() {
             }
 
         }
+    private fun checkIfAdmin(callback: (Boolean) -> Unit) {
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        if (currentUser != null) {
+            val user = FirebaseFirestore.getInstance().collection("Users")
+                .document(currentUser.uid).get().addOnSuccessListener {
+                    val userRole = it.get("role") as String
+                    callback.invoke(userRole == "Admin")
+                }.addOnFailureListener {
+                    callback.invoke(false) // Hata durumunda admin değil olarak işaretleyebiliriz
+                }
+        } else {
+            callback.invoke(false) // Kullanıcı yoksa admin değil olarak işaretleyebiliriz
+        }
+    }
 
 
 
 
     }
     private fun formatTimestamp(date: Date?): String {
-        val dateFormat = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault())
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
         return dateFormat.format(date ?: Date())
     }

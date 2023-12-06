@@ -14,11 +14,12 @@ class AdminAnaSayfaActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val binding = ActivityAdminAnaSayfaBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        replaceFragment(AdminAnaSayfaFragment())
+        replaceFragment(UserNewsFragment())
 
         binding.bottomNavigationView2.setOnItemSelectedListener {
             when (it.itemId) {
-                R.id.anasayfa -> replaceFragment(AdminAnaSayfaFragment())
+                R.id.anasayfa -> replaceFragment(UserNewsFragment())
+                R.id.haberEkle -> replaceFragment(AdminHaberEkleFragment())
                 R.id.haberleriYonet -> replaceFragment(AdminHaberleriYonetFragment())
                 R.id.kullanicilariYonet -> replaceFragment(AdminKullanicilariYonetFragment())
                 else -> {Toast.makeText(this,"İlgili Fragment Bulunamadı",Toast.LENGTH_SHORT).show()}
