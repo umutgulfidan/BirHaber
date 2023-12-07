@@ -1,5 +1,6 @@
 package com.example.birhaberdeneme
 
+import android.app.AlertDialog
 import android.icu.text.Transliterator.Position
 import android.util.Log
 import android.view.LayoutInflater
@@ -79,84 +80,86 @@ class UserAdapter : RecyclerView.Adapter<UserAdapter.UserViewHolder>() {
 
             // Butonlara tıklama işlevlerini ekle
             banButton.setOnClickListener {
-                val userRef = FirebaseFirestore.getInstance().collection("Users").document(user.id)
+                    val userRef = FirebaseFirestore.getInstance().collection("Users").document(user.id)
 
-                userRef.get().addOnSuccessListener { documentSnapshot ->
-                    val isActive = documentSnapshot.getBoolean("active") ?: false
+                    userRef.get().addOnSuccessListener { documentSnapshot ->
+                        val isActive = documentSnapshot.getBoolean("active") ?: false
 
-                    // Tersine çevrilen değeri güncelle
-                    userRef.update("active", !isActive).addOnSuccessListener {
-                        if (isActive) {
-                            // Eğer aktifse pasif hale getirildi
-                            Toast.makeText(itemView.context, "Kullanıcı Başarıyla Yasaklandı", Toast.LENGTH_SHORT).show()
-                            activeTextView.text = "false"
-                            banButton.text = "Yasağı Kaldır"
-                        } else {
-                            // Eğer pasifse aktif hale getirildi
-                            Toast.makeText(itemView.context, "Kullanıcının Yasağı Başarıyla Kaldırıldı", Toast.LENGTH_SHORT).show()
-                            activeTextView.text = "true"
-                            banButton.text = "Yasakla"
+                        // Tersine çevrilen değeri güncelle
+                        userRef.update("active", !isActive).addOnSuccessListener {
+                            if (isActive) {
+                                // Eğer aktifse pasif hale getirildi
+                                Toast.makeText(itemView.context, "Kullanıcı Başarıyla Yasaklandı", Toast.LENGTH_SHORT).show()
+                                activeTextView.text = "false"
+                                banButton.text = "Yasağı Kaldır"
+                            } else {
+                                // Eğer pasifse aktif hale getirildi
+                                Toast.makeText(itemView.context, "Kullanıcının Yasağı Başarıyla Kaldırıldı", Toast.LENGTH_SHORT).show()
+                                activeTextView.text = "true"
+                                banButton.text = "Yasakla"
+                            }
+                        }.addOnFailureListener { exception ->
+                            // Hata durumunda işlemler
+                            Toast.makeText(itemView.context, "Hata: ${exception.message}", Toast.LENGTH_SHORT).show()
                         }
                     }.addOnFailureListener { exception ->
-                        // Hata durumunda işlemler
-                        Toast.makeText(itemView.context, "Hata: ${exception.message}", Toast.LENGTH_SHORT).show()
+                        // Belirtilen kullanıcı bulunamadığında veya başka bir hata olduğunda işlemler
+                        Toast.makeText(itemView.context, "Kullanıcı Bulunamadı veya Hata Oluştu: ${exception.message}", Toast.LENGTH_SHORT).show()
                     }
-                }.addOnFailureListener { exception ->
-                    // Belirtilen kullanıcı bulunamadığında veya başka bir hata olduğunda işlemler
-                    Toast.makeText(itemView.context, "Kullanıcı Bulunamadı veya Hata Oluştu: ${exception.message}", Toast.LENGTH_SHORT).show()
-                }
+
             }
 
             adminButton.setOnClickListener {
                 // Admin yap butonuna tıklandığında yapılacak işlemler
                 // Kullanıcının rolünü admin olarak güncelleme gibi işlemler yapılabilir
-                val userRef = FirebaseFirestore.getInstance().collection("Users").document(user.id)
 
-                userRef.get().addOnSuccessListener { documentSnapshot ->
-                    val currentRole = documentSnapshot.getString("role") ?: "User"
+                    val userRef = FirebaseFirestore.getInstance().collection("Users").document(user.id)
 
-                    // Tersine çevrilen rolü güncelle
-                    val newRole = if (currentRole == "User") "Admin" else "User"
-                    userRef.update("role", newRole).addOnSuccessListener {
-                        val buttonText = if (newRole == "User") "Yetkilendir" else "Yetkisini Al"
-                        Toast.makeText(itemView.context, "Kullanıcı Başarıyla $newRole Yapıldı", Toast.LENGTH_SHORT).show()
-                        roleTextView.text = newRole
-                        adminButton.text = buttonText
+                    userRef.get().addOnSuccessListener { documentSnapshot ->
+                        val currentRole = documentSnapshot.getString("role") ?: "User"
+
+                        // Tersine çevrilen rolü güncelle
+                        val newRole = if (currentRole == "User") "Admin" else "User"
+                        userRef.update("role", newRole).addOnSuccessListener {
+                            val buttonText = if (newRole == "User") "Yetkilendir" else "Yetkisini Al"
+                            Toast.makeText(itemView.context, "Kullanıcı Başarıyla $newRole Yapıldı", Toast.LENGTH_SHORT).show()
+                            roleTextView.text = newRole
+                            adminButton.text = buttonText
+                        }.addOnFailureListener { exception ->
+                            // Hata durumunda işlemler
+                            Toast.makeText(itemView.context, "Hata: ${exception.message}", Toast.LENGTH_SHORT).show()
+                        }
                     }.addOnFailureListener { exception ->
-                        // Hata durumunda işlemler
-                        Toast.makeText(itemView.context, "Hata: ${exception.message}", Toast.LENGTH_SHORT).show()
+                        // Belirtilen kullanıcı bulunamadığında veya başka bir hata olduğunda işlemler
+                        Toast.makeText(itemView.context, "Kullanıcı Bulunamadı veya Hata Oluştu: ${exception.message}", Toast.LENGTH_SHORT).show()
                     }
-                }.addOnFailureListener { exception ->
-                    // Belirtilen kullanıcı bulunamadığında veya başka bir hata olduğunda işlemler
-                    Toast.makeText(itemView.context, "Kullanıcı Bulunamadı veya Hata Oluştu: ${exception.message}", Toast.LENGTH_SHORT).show()
+
                 }
+
+            if(!user.profilePictureUrl.isNullOrEmpty())
+            {
+                val storageRef = storageInstance.reference.child("ProfilPictures").child(user.id).child("profile.jpg")
+                storageRef.downloadUrl.addOnSuccessListener { uri ->
+                    val imageUrl = uri.toString()
+                    Glide.with(itemView.context)
+                        .load(imageUrl)
+                        .placeholder(R.drawable.baseline_account_circle_24) // Burada default_image, drawable klasöründe bulunan varsayılan görselinizdir
+                        .error(R.drawable.hata_vector_kirmizi_32)// Eğer bir hata olursa gösterilecek görsel
+                        .apply(RequestOptions.bitmapTransform(CircleCrop()))
+                        .into(userProfilImageView)
+                }.addOnFailureListener {
+                    // Eğer resim yüklenirken bir hata olursa ne yapılacağı burada tanımlanabilir
+                    // Örneğin: Toast mesajı gösterilebilir
+                    Toast.makeText(itemView.context, "Resim yüklenirken hata oluştu : ${it.message}", Toast.LENGTH_SHORT).show()
+                }
+            }else {
+                // Eğer profil resmi yoksa, imageView'inizde varsayılan görseli gösterebilirsiniz
+                userProfilImageView.setImageResource(R.drawable.baseline_account_circle_24)
             }
 
-
-                if(!user.profilePictureUrl.isNullOrEmpty())
-                {
-                    val storageRef = storageInstance.reference.child("ProfilPictures").child(user.id).child("profile.jpg")
-                    storageRef.downloadUrl.addOnSuccessListener { uri ->
-                        val imageUrl = uri.toString()
-                        Glide.with(itemView.context)
-                            .load(imageUrl)
-                            .placeholder(R.drawable.baseline_account_circle_24) // Burada default_image, drawable klasöründe bulunan varsayılan görselinizdir
-                            .error(R.drawable.hata_vector_kirmizi_32)// Eğer bir hata olursa gösterilecek görsel
-                            .apply(RequestOptions.bitmapTransform(CircleCrop()))
-                            .into(userProfilImageView)
-                    }.addOnFailureListener {
-                        // Eğer resim yüklenirken bir hata olursa ne yapılacağı burada tanımlanabilir
-                        // Örneğin: Toast mesajı gösterilebilir
-                        Toast.makeText(itemView.context, "Resim yüklenirken hata oluştu : ${it.message}", Toast.LENGTH_SHORT).show()
-                    }
-                }else {
-                    // Eğer profil resmi yoksa, imageView'inizde varsayılan görseli gösterebilirsiniz
-                    userProfilImageView.setImageResource(R.drawable.baseline_account_circle_24)
-                }
-
+            }
 
 
         }
 
     }
-}

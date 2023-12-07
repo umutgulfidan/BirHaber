@@ -1,10 +1,13 @@
 package com.example.birhaberdeneme
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView.OnItemClickListener
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.birhaberdeneme.databinding.FragmentAdminHaberleriYonetBinding
@@ -31,6 +34,8 @@ class AdminHaberleriYonetFragment : Fragment() {
     private val newsCollection = firestore.collection("News")
     private lateinit var binding:FragmentAdminHaberleriYonetBinding
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -49,6 +54,17 @@ class AdminHaberleriYonetFragment : Fragment() {
 
         recyclerView = view.findViewById(R.id.recyclerViewNewsManagement)
         newAdapter = NewsManagementAdapter()
+        newAdapter.setOnClickListener(object :NewsManagementAdapter.onItemClickListener{
+            override fun onItemClick(position: Int) {
+                Toast.makeText(context,"You Clicked on item no $position", Toast.LENGTH_SHORT).show()
+                val clickedNews = newAdapter.newsList[position]
+                val clickedNewsId = clickedNews.newsId
+                val intent = Intent(context,HaberDuzenleActivity::class.java)
+                intent.putExtra("newsId",clickedNewsId)
+                startActivity(intent)
+            }
+
+        })
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = newAdapter
         loadNewsData()

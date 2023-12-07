@@ -1,5 +1,6 @@
 package com.example.birhaberdeneme
 
+import android.app.AlertDialog
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -18,6 +19,18 @@ import com.google.firebase.storage.FirebaseStorage
 class NewsManagementAdapter :
     RecyclerView.Adapter<NewsManagementAdapter.NewsManagementViewHolder>() {
     var newsList : List<NewsModule> = emptyList()
+    private var mListener: NewsManagementAdapter.onItemClickListener = object :
+        NewsManagementAdapter.onItemClickListener {
+        override fun onItemClick(position: Int) {
+            // Buraya gerekirse onItemClick için bir kod ekleyebilirsiniz.
+        }
+    }
+    interface onItemClickListener{
+        fun onItemClick(position: Int)
+    }
+    fun setOnClickListener(listener: NewsManagementAdapter.onItemClickListener){
+        mListener= listener
+    }
 
     public fun updateNewsList(newsList:List<NewsModule>){
         this.newsList = newsList
@@ -32,7 +45,7 @@ class NewsManagementAdapter :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsManagementViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_newsmanagement,parent,false)
-        return NewsManagementViewHolder(view)
+        return NewsManagementViewHolder(view,mListener)
     }
 
     override fun getItemCount(): Int {
@@ -44,13 +57,19 @@ class NewsManagementAdapter :
         holder.bind(new,this)
     }
 
-    class NewsManagementViewHolder(itemView: View):RecyclerView.ViewHolder(itemView){
+    class NewsManagementViewHolder(itemView: View,listener:onItemClickListener):RecyclerView.ViewHolder(itemView){
         // ViewHolder içindeki view'ları tanımla
         private val ivHaberResim : ImageView = itemView.findViewById(R.id.ivNewsMangementHaberResim)
         private val tvHaberBaslik : TextView = itemView.findViewById(R.id.tvNewsMangementHaberBaslik)
         private val tvHaberAciklama : TextView = itemView.findViewById(R.id.tvNewsMangementHaberAciklama)
         private val tvYukleyenEmail : TextView = itemView.findViewById(R.id.tvNewsMangementHaberBaslikYukleyenEposta)
         private val btnHaberSil : Button = itemView.findViewById(R.id.btnHaberiSil)
+
+        init {
+            itemView.findViewById<Button>(R.id.btnHaberDuzenle).setOnClickListener{
+                listener.onItemClick(adapterPosition)
+            }
+        }
 
 
 
@@ -67,50 +86,62 @@ class NewsManagementAdapter :
             }
 
             btnHaberSil.setOnClickListener{
+                val builder = AlertDialog.Builder(itemView.context)
+                builder.setTitle("Emin misiniz?")
+                builder.setMessage("Bu haber kalıcı olarak silinecek")
+                builder.setPositiveButton("Eminim"){
+                        dialog,which ->
+                    FirebaseFirestore.getInstance().collection("News").document(new.newsId)
+                        .delete().addOnSuccessListener {
+                            // Silme işlemi başarılı olduğunda listeden öğeyi kaldır
+                            val position = adapterPosition
+                            val deletedNewsId = adapter.newsList[position].newsId
+                            adapter.newsList = adapter.newsList .filterIndexed { index, _ -> index != position }
+                            adapter.notifyItemRemoved(position)
+                            adapter.notifyItemRangeChanged(position, adapter.newsList.size)
+                            Toast.makeText(itemView.context,"Haber Başarıyla Silindi",Toast.LENGTH_SHORT).show()
+                            // Silinen haberin ID'sini favori haberler listesinden kaldırmak için işlemi gerçekleştir
+                            val userCollection = FirebaseFirestore.getInstance().collection("Users")
+                            userCollection.get().addOnSuccessListener {querySnapshot ->
+                                for (document in querySnapshot){
+                                    val userId = document.id
+                                    val userRef = userCollection.document(userId)
 
-                FirebaseFirestore.getInstance().collection("News").document(new.newsId)
-                    .delete().addOnSuccessListener {
-                        // Silme işlemi başarılı olduğunda listeden öğeyi kaldır
-                        val position = adapterPosition
-                        val deletedNewsId = adapter.newsList[position].newsId
-                        adapter.newsList = adapter.newsList .filterIndexed { index, _ -> index != position }
-                        adapter.notifyItemRemoved(position)
-                        adapter.notifyItemRangeChanged(position, adapter.newsList.size)
-                        Toast.makeText(itemView.context,"Haber Başarıyla Silindi",Toast.LENGTH_SHORT).show()
-                        // Silinen haberin ID'sini favori haberler listesinden kaldırmak için işlemi gerçekleştir
-                        val userCollection = FirebaseFirestore.getInstance().collection("Users")
-                        userCollection.get().addOnSuccessListener {querySnapshot ->
-                            for (document in querySnapshot){
-                                val userId = document.id
-                                val userRef = userCollection.document(userId)
+                                    userRef.get().addOnSuccessListener {
+                                        val favoriteNewsList = it.get("favoriteNews") as? ArrayList<String>
 
-                                userRef.get().addOnSuccessListener {
-                                    val favoriteNewsList = it.get("favoriteNews") as? ArrayList<String>
-
-                                    if(favoriteNewsList != null && favoriteNewsList.contains(deletedNewsId)){
-                                        favoriteNewsList.remove(deletedNewsId)
-                                        userRef.update("favoriteNews",favoriteNewsList).addOnSuccessListener {
-                                            println("Kullanıcı $userId favori haberler listesinden silindi: $deletedNewsId")
-                                        }
-                                            .addOnFailureListener { e ->
-                                                println("Hata: Kullanıcı $userId favori haberler listesini güncellerken hata oluştu: ${e.message}")
+                                        if(favoriteNewsList != null && favoriteNewsList.contains(deletedNewsId)){
+                                            favoriteNewsList.remove(deletedNewsId)
+                                            userRef.update("favoriteNews",favoriteNewsList).addOnSuccessListener {
+                                                println("Kullanıcı $userId favori haberler listesinden silindi: $deletedNewsId")
                                             }
+                                                .addOnFailureListener { e ->
+                                                    println("Hata: Kullanıcı $userId favori haberler listesini güncellerken hata oluştu: ${e.message}")
+                                                }
+                                        }
                                     }
                                 }
                             }
+
+
                         }
-
-
-                    }
-                    .addOnFailureListener{
-                        Toast.makeText(itemView.context,"Hata : ${it.message}",Toast.LENGTH_SHORT).show()
-                    }
+                        .addOnFailureListener{
+                            Toast.makeText(itemView.context,"Hata : ${it.message}",Toast.LENGTH_SHORT).show()
+                        }
                     // Haberin Resmini storage dan silme
                     FirebaseStorage.getInstance().reference.child("NewsPictures/${new.newsId}/news_image.jpg").delete().addOnSuccessListener {
                         Toast.makeText(itemView.context,"Eski Haber ilişkin resim veri tabanından silindi",Toast.LENGTH_SHORT).show()
                     }.addOnFailureListener{
                         Toast.makeText(itemView.context,"Hata ${it.message}",Toast.LENGTH_SHORT)
                     }
+                }
+                builder.setNegativeButton("İptal"){
+                        dialog,which ->
+                    dialog.cancel()
+                }
+                val dialog = builder.create()
+                dialog.show()
+
             }
 
             if(!new.newsImageUrl.isNullOrEmpty()){
