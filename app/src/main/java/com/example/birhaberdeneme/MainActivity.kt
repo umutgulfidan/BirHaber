@@ -66,7 +66,6 @@ class MainActivity : AppCompatActivity() {
 
         binding.btnGirisYap.setOnClickListener{
 
-
             val email = binding.etEmail.text.toString()
             val sifre = binding.etSifre.text.toString()
             if(email.isEmpty()){
@@ -105,8 +104,13 @@ class MainActivity : AppCompatActivity() {
                                             startActivity(intent)
                                         }
                                         (userRole == "User" || userRole == "Admin") && !userActive ->{
-                                            Toast.makeText(this,"YASAKLANMIŞSINIZ",Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(this,"Yasaklandınız",Toast.LENGTH_SHORT).show()
+                                            var activity_yasakliekran = layoutInflater.inflate(R.layout.activity_yasakliekran,null)
+                                            val  alertDialog = AlertDialog.Builder(this)
+                                            alertDialog.setView(activity_yasakliekran)
+                                            alertDialog.setNegativeButton("Kapat"){dialog,which -> }
                                             auth.signOut()
+                                            alertDialog.show()
                                         }
 
 

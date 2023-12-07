@@ -1,13 +1,16 @@
 package com.example.birhaberdeneme
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.birhaberdeneme.databinding.FragmentAdminKullanicilariYonetBinding
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 
@@ -29,6 +32,7 @@ class AdminKullanicilariYonetFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var userAdapter: UserAdapter
     private val firestore= FirebaseFirestore.getInstance()
+    private val auth = FirebaseAuth.getInstance()
     private val usersCollection = firestore.collection("Users")
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,13 +48,41 @@ class AdminKullanicilariYonetFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_admin_kullanicilari_yonet, container, false)
+        binding = FragmentAdminKullanicilariYonetBinding.inflate(inflater,container,false)
+        val view = binding.root
         recyclerView = view.findViewById(R.id.recyclerViewUser)
         userAdapter = UserAdapter()
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter =userAdapter
 
         loadUsersData()
+
+         binding.buttonSearchUserManagement.setOnClickListener{
+             val text = binding.editTextSearchUserManagement.text.toString().lowercase()
+             if(text.isNotEmpty()){
+                 userAdapter.filter(text)
+                 binding.buttonSearchUserManagement.visibility = View.GONE
+                 binding.btnAramaTemizleUserManagement.visibility = View.VISIBLE
+             }
+             else{
+                 loadUsersData()
+             }
+         }
+
+        binding.btnAramaTemizleUserManagement.setOnClickListener{
+            binding.editTextSearchUserManagement.text.clear()
+            binding.btnAramaTemizleUserManagement.visibility = View.GONE
+            binding.buttonSearchUserManagement.visibility = View.VISIBLE
+            loadUsersData()
+        }
+
+        binding.btnCikis.setOnClickListener{
+            auth.signOut()
+            Toast.makeText(activity,"Çıkış Yapıldı", Toast.LENGTH_SHORT).show()
+            val intent = Intent(activity,MainActivity::class.java)
+            startActivity(intent)
+            activity?.finish()
+        }
 
         return view
     }

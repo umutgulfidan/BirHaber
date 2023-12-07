@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="190dp" />
+        app:layout_constraintGuide_begin="171dp" />
 
     <ImageView
         android:id="@+id/birhaberLogo"
@@ -131,31 +131,34 @@
                 app:layout_constraintStart_toStartOf="@+id/etSifre"
                 app:layout_constraintTop_toBottomOf="@+id/twSifremiUnuttum" />
 
-            <TextView
-                android:id="@+id/textView6"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="40dp"
-                android:layout_marginTop="20dp"
-                android:text="@string/hesabınızYokMu"
-                android:textSize="16sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/btnGirisYap" />
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="@+id/btnGirisYap"
+                app:layout_constraintStart_toStartOf="@+id/btnGirisYap"
+                app:layout_constraintTop_toBottomOf="@+id/btnGirisYap">
 
-            <TextView
-                android:id="@+id/twUyeOl"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:text="@string/uyeOl"
-                android:textColor="@color/my_primary"
-                android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="@+id/textView6"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.176"
-                app:layout_constraintStart_toEndOf="@+id/textView6"
-                app:layout_constraintTop_toTopOf="@+id/textView6"
-                app:layout_constraintVertical_bias="0.0" />
+                <TextView
+                    android:id="@+id/textView6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/hesabınızYokMu"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/twUyeOl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/uyeOl"
+                    android:textColor="@color/my_primary"
+                    android:textSize="16sp" />
+            </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

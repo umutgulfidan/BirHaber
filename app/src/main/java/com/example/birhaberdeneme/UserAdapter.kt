@@ -27,6 +27,13 @@ class UserAdapter : RecyclerView.Adapter<UserAdapter.UserViewHolder>() {
         notifyDataSetChanged()
     }
 
+    fun filter(text:String){
+        val filteredList = userList.filter { user ->
+            user.email?.contains(text,ignoreCase = true) == true
+        }
+        updateUserList(filteredList)
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_users, parent, false)
         return UserViewHolder(view)

@@ -50,7 +50,15 @@ class NewsDetailActivity : AppCompatActivity() {
                             binding.tvTarih.text = formattedDate
                             binding.tvHaberMetin.text = news.newsText
                             binding.textViewHaberBaslik.text = news.newsTitle
-                            binding.tvHaberYazar.text = news.uploadedById
+
+                            val uploadedById = news.uploadedById
+                            uploadedById?.let {
+                                fireStore.collection("Users").document(it).get().addOnSuccessListener {
+                                    userData ->
+                                    val email : String = userData.get("email") as String
+                                    binding.tvHaberYazar.text = email
+                                }
+                            }
 
                             if(!news.newsImageUrl.isNullOrEmpty()){
 
@@ -171,6 +179,6 @@ class NewsDetailActivity : AppCompatActivity() {
 
     }
     private fun formatTimestamp(date: Date?): String {
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd'   'HH:mm:ss", Locale.getDefault())
         return dateFormat.format(date ?: Date())
     }
