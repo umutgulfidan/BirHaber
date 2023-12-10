@@ -5,10 +5,13 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class BeklemeEkraniActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
@@ -16,6 +19,7 @@ class BeklemeEkraniActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bekleme_ekrani)
+
 
         Handler(Looper.getMainLooper()).postDelayed({
             auth = FirebaseAuth.getInstance()
@@ -57,9 +61,6 @@ class BeklemeEkraniActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         },3000)
-
-
-
 
     }
 

@@ -8,6 +8,12 @@
         android:layout_height="wrap_content"
         android:title="Haberler" />
     <item
+        android:id="@+id/newsResults"
+        android:icon="@drawable/haberler_vector_24"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:title="News Results" />
+    <item
         android:id="@+id/favorites"
         android:icon="@drawable/favoriler_vector_24"
         android:layout_width="wrap_content"

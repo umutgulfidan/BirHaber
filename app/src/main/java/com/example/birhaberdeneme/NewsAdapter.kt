@@ -63,6 +63,7 @@ class NewsAdapter : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>()
         private val descriptionTextView: TextView = itemView.findViewById(R.id.tvHaberAciklama)
         private val newsImageView : ImageView = itemView.findViewById(R.id.ivHaberResim)
 
+
         init {
             itemView.setOnClickListener{
                 listener.onItemClick(adapterPosition)

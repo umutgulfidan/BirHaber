@@ -18,6 +18,9 @@
         android:theme="@style/Theme.BirHaberDeneme"
         tools:targetApi="31">
         <activity
+            android:name=".HaberWebViewActivity"
+            android:exported="false" />
+        <activity
             android:name=".HaberDuzenleActivity"
             android:exported="false" />
         <activity

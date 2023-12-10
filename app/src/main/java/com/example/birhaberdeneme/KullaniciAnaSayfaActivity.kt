@@ -25,6 +25,7 @@ class KullaniciAnaSayfaActivity : AppCompatActivity() {
                 R.id.news -> replaceFragment(UserNewsFragment())
                 R.id.favorites -> replaceFragment(UserFavoritesFragment())
                 R.id.accountSettings -> replaceFragment(UserAccountSettingsFragment())
+                R.id.newsResults -> replaceFragment(NewsResultFragment())
 
                 else -> {
                     Toast.makeText(this,"İlgili Fragment Id si bulunamadı",Toast.LENGTH_SHORT).show()
