@@ -2,6 +2,7 @@ package com.example.birhaberdeneme
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
@@ -24,6 +25,7 @@ class NewsDetailActivity : AppCompatActivity() {
     val auth = FirebaseAuth.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         val binding = ActivityNewsDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -144,7 +146,7 @@ class NewsDetailActivity : AppCompatActivity() {
                     }
 
                     fireStore.collection("Users").document(currentUserId).update("favoriteNews",favoriteNews).addOnSuccessListener {
-                        Toast.makeText(this,"Başarıyla Favorilerinize Eklendi",Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this,"Başarıyla Favorileriniz Güncellendi",Toast.LENGTH_SHORT).show()
                     }
                         .addOnFailureListener{
                             Toast.makeText(this,"Bir Hatayla Karşılaşıldı",Toast.LENGTH_SHORT).show()
@@ -157,6 +159,8 @@ class NewsDetailActivity : AppCompatActivity() {
                         Toast.makeText(this,"User Ararken Hata : ${it.message}",Toast.LENGTH_SHORT).show()
                     }
             }
+
+        startReadCountTimer()
 
         }
     private fun checkIfAdmin(callback: (Boolean) -> Unit) {
@@ -174,7 +178,60 @@ class NewsDetailActivity : AppCompatActivity() {
         }
     }
 
+    private var readCountTimer: CountDownTimer? = null
+    private var readCountUpdated = false // Okuma sayısı güncellendi mi?
 
+    // Zamanlayıcıyı başlatmak için bir fonksiyon
+    private fun startReadCountTimer() {
+        readCountTimer?.cancel() // Zamanlayıcıyı iptal et
+        readCountTimer = object : CountDownTimer(60000, 1000) { // 1 dakika (60000 milisaniye)
+            override fun onTick(millisUntilFinished: Long) {
+                // Her saniyede yapılacak işler (opsiyonel)
+            }
+
+            override fun onFinish() {
+                if (!readCountUpdated) {
+                    incrementReadCountInFirestore() // Zamanlayıcı süresi dolduğunda Firestore'da veriyi güncelle
+                }
+            }
+        }.start()
+    }
+
+    // Firestore'daki okunan haber sayısını artırmak için bir fonksiyon
+    private fun incrementReadCountInFirestore() {
+        // Firestore'daki okunan haber sayısını artırma işlemi
+        val currentUserId = auth.uid.toString()
+        val userRef = fireStore.collection("Users").document(currentUserId)
+
+        userRef.get().addOnSuccessListener { documentSnapshot ->
+            if (documentSnapshot.exists()) {
+                val readCount = documentSnapshot.getLong("okunanHaberSayisi") ?: 0
+                userRef.update("okunanHaberSayisi", readCount + 1)
+                    .addOnSuccessListener {
+                        readCountUpdated = true
+                        Toast.makeText(this,"Okunan Haber Sayısı Güncellendi",Toast.LENGTH_SHORT).show()
+                        // Güncelleme başarılı oldu, istenirse bildirim gösterilebilir veya başka bir işlem yapılabilir
+                    }
+                    .addOnFailureListener {
+                        // Güncelleme başarısız oldu
+                    }
+            }
+        }
+    }
+
+    // Eğer kullanıcı ekranı terk ederse veya başka bir işlem yaparsa, zamanlayıcıyı iptal etmek gerekebilir
+    // Örneğin, onPause() veya onDestroy() içinde
+    override fun onPause() {
+        super.onPause()
+        readCountTimer?.cancel() // Zamanlayıcıyı iptal et
+    }
+
+    // Kullanıcı geri döndüğünde veya ekranda belirli bir etkileşim olduğunda, zamanlayıcıyı başlatmak gerekebilir
+// Örneğin, onResume() içinde
+    override fun onResume() {
+        super.onResume()
+        startReadCountTimer() // Zamanlayıcıyı başlat
+    }
 
 
     }

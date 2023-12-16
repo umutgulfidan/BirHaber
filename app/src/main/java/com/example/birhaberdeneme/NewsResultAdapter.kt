@@ -7,6 +7,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class NewsResultAdapter : RecyclerView.Adapter<NewsResultAdapter.NewsResultViewHolder>() {
     public var newsResultList : List<Article> = emptyList()
@@ -57,7 +60,9 @@ class NewsResultAdapter : RecyclerView.Adapter<NewsResultAdapter.NewsResultViewH
             descriptionTextView.text = newsResultArticle.description
             kaynakTextView.text = newsResultArticle.source.name.toString()
             yazarTextView.text = newsResultArticle.author
-            tarihTextView.text = newsResultArticle.publishedAt
+            val cleanDate = newsResultArticle.publishedAt.replace("T","  ").replace("Z","")
+            tarihTextView.text = cleanDate
+
             Glide.with(itemView.context).load(newsResultArticle.urlToImage)
                 .placeholder(R.drawable.haberler_vector_24)
                 .into(newsImageView)
